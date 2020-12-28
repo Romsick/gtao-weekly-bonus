@@ -20,10 +20,13 @@ posts = reddit.subreddit('gtaonline').search(post_title_search, sort='new', time
 
 yesterday_timestamp = (datetime.utcnow() - timedelta(days=1)).timestamp()
 
+webhook = DiscordWebhook(url=webhook_url, content="TEST")
+webhook.execute()
 for post in posts:
     # If posted by user we want and in the last 24h
     if post.author == post_author and post.created_utc > yesterday_timestamp:
         webhook = DiscordWebhook(url=webhook_url, content=post.selftext)
         webhook.execute()
+
 
     
