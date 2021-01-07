@@ -23,7 +23,7 @@ yesterday_timestamp = (datetime.utcnow() - timedelta(days=1)).timestamp()
 
 for post in posts:
     # If title starts with date and posted in the last 24h
-    if re.match(r"^\d{2}\/\d{2}\/\d{4}.*$", post.title) and post.created_utc > yesterday_timestamp:
+    if re.match(r"^\d{1,2}\/\d{1,2}\/\d{4}.*$", post.title) and post.created_utc > yesterday_timestamp:
         print(f"{post.title} -- {post.author}")
         webhook = DiscordWebhook(url=webhook_url, content=post.selftext)
         webhook.execute()
