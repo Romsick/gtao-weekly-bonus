@@ -25,39 +25,32 @@ CLEANUP_REGEX_LIST = [
 
 cleanup_rgx = rf"({'|'.join(CLEANUP_REGEX_LIST)})"
 
-# post_author = "Call_Me_Tsuikyit"
-post_title_search = "Weekly GTA Online Bonuses"
+def get_reddit_post_text(reddit_client):
+    post_title_search = "Weekly GTA Online Bonuses"
+    posts = reddit_client.subreddit('gtaonline').search(post_title_search, sort='new', time_filter='week')
+    yesterday_timestamp = (datetime.utcnow() - timedelta(days=1)).timestamp()
+
+    for post in posts:
+        # If title starts with date and posted in the last 24h
+        if re.match(r"^\d{1,2}\/\d{1,2}\/\d{4}.*$", post.title) and post.created_utc > yesterday_timestamp:
+            print(f"{post.title} -- {post.author}")
+            return re.sub(cleanup_rgx, "", post.selftext)
 
 
 reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
-posts = reddit.subreddit('gtaonline').search(post_title_search, sort='new', time_filter='week')
 
-yesterday_timestamp = (datetime.utcnow() - timedelta(days=5)).timestamp()
+POST_TEXT = get_reddit_post_text(reddit)
 
-updates_post = None
-for post in posts:
-    # If title starts with date and posted in the last 24h
-    if re.match(r"^\d{1,2}\/\d{1,2}\/\d{4}.*$", post.title) and post.created_utc > yesterday_timestamp:
-        print(f"{post.title} -- {post.author}")
-        clean_text = re.sub(cleanup_rgx, "", post.selftext)
-        webhook = DiscordWebhook(url=webhook_url, content=clean_text)
-        webhook.execute()
+webhook = DiscordWebhook(url=webhook_url, content=POST_TEXT)
+org_msg = webhook.execute()
 
-
-
-# cont = "Testing webhook editing - ORIGINAL"
-
-# webhook = DiscordWebhook(url=webhook_url, content=cont)
-# org = webhook.execute()
-# cont = cont + " +1 "
-# webhook.content = cont
-# sleep(30)
-# msg = webhook.edit(org)
-# sleep(30)
-# cont = cont + " +2"
-# webhook.content = cont
-# msg = webhook.edit(org)
-# sleep(30)
-# cont = cont + " +3"
-# webhook.content = cont
-# msg = webhook.edit(org)
+for iteration in range(1,37):
+    # Wait 10min
+    sleep(600)
+    upd_text = get_reddit_post_text(reddit)
+    # If the new text is different from the previous text, edit message
+    if POST_TEXT != upd_text:
+        print("Updates in post found... editing message...")
+        webhook.content = upd_text
+        msg = webhook.edit(org_msg)
+        POST_TEXT = upd_text
