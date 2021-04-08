@@ -82,12 +82,14 @@ if POST_TEXT != None:
     print(embed)
     print("Posting first message")
     org_msg = webhook.execute()
-    if org_msg.status_code not in [200, 204]:
+    stat = org_msg[0].status_code if type(org_msg) == list else org_msg.status_code
+    if stat not in [200, 204]:
         embed = build_embed(POST_TEXT)
         webhook.add_embed(embed)
         print(embed)
         print("Posting first message again")
         org_msg = webhook.execute()
+
 
 else:
     org_msg = None
