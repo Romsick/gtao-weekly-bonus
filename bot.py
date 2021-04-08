@@ -28,7 +28,7 @@ cleanup_rgx = rf"({'|'.join(CLEANUP_REGEX_LIST)})"
 def get_reddit_post_text(reddit_client):
     post_title_search = "Weekly GTA Online Bonuses"
     posts = reddit_client.subreddit('gtaonline').search(post_title_search, sort='new', time_filter='week')
-    yesterday_timestamp = (datetime.utcnow() - timedelta(days=7)).timestamp()
+    yesterday_timestamp = (datetime.utcnow() - timedelta(days=1)).timestamp()
 
     for post in posts:
         # If title starts with date and posted in the last 24h
@@ -71,18 +71,20 @@ def cleanup_embed(embed):
 
 reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
 
-POST_TEXT = get_reddit_post_text(reddit).split("\n\n")
+POST_TEXT = get_reddit_post_text(reddit)
 
-webhook = DiscordWebhook(url=webhook_url)
+if POST_TEXT != None:
+    POST_TEXT = POST_TEXT.split("\n\n")
+    webhook = DiscordWebhook(url=webhook_url)
 
-embed = build_embed(POST_TEXT)
-webhook.add_embed(embed)
+    embed = build_embed(POST_TEXT)
+    webhook.add_embed(embed)
 
-org_msg = webhook.execute()
+    org_msg = webhook.execute()
 
 for iteration in range(1,37):
     # Wait 10min
-    sleep(10)
+    sleep(600)
     upd_text = get_reddit_post_text(reddit).split("\n\n")
     # If the new text is different from the previous text, edit message
     if POST_TEXT != upd_text:
