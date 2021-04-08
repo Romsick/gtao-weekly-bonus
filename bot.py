@@ -88,9 +88,11 @@ for iteration in range(1,37):
     # Wait 10min
     print("Waiting for next iteration...")
     sleep(600)
-    upd_text = get_reddit_post_text(reddit).split("\n\n")
+    upd_text = get_reddit_post_text(reddit)
+    if upd_text != None:
+        upd_text = upd_text.split("\n\n")
     # If the new text is different from the previous text, edit message
-    if POST_TEXT != upd_text and upd_text != None:
+    if upd_text != None and POST_TEXT != upd_text:
         webhook.remove_embeds()
         print("Updates in post found... editing message...")
         embed = build_embed(upd_text, embed)
