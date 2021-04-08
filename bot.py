@@ -70,7 +70,7 @@ def cleanup_embed(embed):
 
 
 reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
-
+print("First lookup")
 POST_TEXT = get_reddit_post_text(reddit)
 
 if POST_TEXT != None:
@@ -79,19 +79,25 @@ if POST_TEXT != None:
 
     embed = build_embed(POST_TEXT)
     webhook.add_embed(embed)
-
+    print("Posting first message")
     org_msg = webhook.execute()
+else:
+    org_msg = None
 
 for iteration in range(1,37):
     # Wait 10min
+    print("Waiting for next iteration...")
     sleep(600)
     upd_text = get_reddit_post_text(reddit).split("\n\n")
     # If the new text is different from the previous text, edit message
-    if POST_TEXT != upd_text:
+    if POST_TEXT != upd_text and upd_text != None:
         webhook.remove_embeds()
         print("Updates in post found... editing message...")
         embed = build_embed(upd_text, embed)
         webhook.add_embed(embed)
-        msg = webhook.edit(org_msg)
+        if not org_msg:
+            org_msg = webhook.execute()
+        else:
+            msg = webhook.edit(org_msg)
         POST_TEXT = upd_text
 
