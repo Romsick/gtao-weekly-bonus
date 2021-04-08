@@ -70,12 +70,12 @@ def cleanup_embed(embed):
 
 
 reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
+webhook = DiscordWebhook(url=webhook_url)
 print("First lookup")
 POST_TEXT = get_reddit_post_text(reddit)
 
 if POST_TEXT != None:
     POST_TEXT = POST_TEXT.split("\n\n")
-    webhook = DiscordWebhook(url=webhook_url)
 
     embed = build_embed(POST_TEXT)
     webhook.add_embed(embed)
@@ -84,10 +84,10 @@ if POST_TEXT != None:
 else:
     org_msg = None
 
-for iteration in range(1,37):
-    # Wait 10min
+for iteration in range(1,45):
+    # Wait 2min for 1.5h
     print("Waiting for next iteration...")
-    sleep(600)
+    sleep(120)
     upd_text = get_reddit_post_text(reddit)
     if upd_text != None:
         upd_text = upd_text.split("\n\n")
