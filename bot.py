@@ -79,6 +79,7 @@ if POST_TEXT != None:
 
     embed = build_embed(POST_TEXT)
     webhook.add_embed(embed)
+    print(embed)
     print("Posting first message")
     org_msg = webhook.execute()
 else:
