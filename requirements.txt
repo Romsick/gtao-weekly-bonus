@@ -1,2 +1,2 @@
-discord-webhook
-praw
+discord-webhook==0.13.0
+praw==7.2.0
