@@ -28,7 +28,7 @@ cleanup_rgx = rf"({'|'.join(CLEANUP_REGEX_LIST)})"
 def get_reddit_post_text(reddit_client):
     post_title_search = "Weekly GTA Online Bonuses"
     posts = reddit_client.subreddit('gtaonline').search(post_title_search, sort='new', time_filter='week')
-    yesterday_timestamp = (datetime.utcnow() - timedelta(days=1)).timestamp()
+    yesterday_timestamp = (datetime.utcnow() - timedelta(hours=22)).timestamp()
 
     for post in posts:
         # If title starts with date and posted in the last 24h
