@@ -13,6 +13,11 @@ user_agent = os.environ.get("REDDIT_USER_AGENT")
 webhook_id = os.environ.get("WEBHOOK_ID")
 webhook_secret = os.environ.get("WEBHOOK_SECRET")
 webhook_url = f"https://discord.com/api/webhooks/{webhook_id}/{webhook_secret}"
+webhook_id_2 = os.environ.get("WEBHOOK_ID_2")
+webhook_secret_2 = os.environ.get("WEBHOOK_SECRET_2")
+webhook_url_2 = f"https://discord.com/api/webhooks/{webhook_id_2}/{webhook_secret_2}"
+
+webhook_url_list = [webhook_url, webhook_url_2]
 
 CLEANUP_REGEX_LIST = [
     r"\[Embedded Updates\]\(.*\)",
@@ -70,7 +75,7 @@ def cleanup_embed(embed):
 
 
 reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent)
-webhook = DiscordWebhook(url=webhook_url)
+webhook = DiscordWebhook(url=webhook_url_list)
 print("First lookup")
 POST_TEXT = get_reddit_post_text(reddit)
 
